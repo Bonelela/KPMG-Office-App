@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Office Directory</title>
+<style>
+:root{
+  --bg:#f3f6fb; --surface:#ffffff; --ink:#0c233c; --muted:#4a5b73; --line:#cdd7e6;
+  --sign:#00338d; --sign-ink:#ffffff; --chip:#e3ebf7; --focus:#0091da;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#061a3f; --surface:#0d2a5e; --ink:#eaf1fb; --muted:#9fb4d3; --line:#24427a;
+    --sign:#0091da; --sign-ink:#ffffff; --chip:#14336d; --focus:#66c4f2; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#061a3f; --surface:#0d2a5e; --ink:#eaf1fb; --muted:#9fb4d3; --line:#24427a;
+  --sign:#0091da; --sign-ink:#ffffff; --chip:#14336d; --focus:#66c4f2; color-scheme:dark;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --surface:#0d2a5e; } }
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Univers","Helvetica Neue",Arial,sans-serif;font-size:17px;line-height:1.45}
+.brand{background:#00338d;padding:16px}
+.brand div{max-width:640px;margin:0 auto}
+.brand svg{display:block;height:30px;width:auto}
+main{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+header h1{font-weight:700;font-size:2rem;line-height:1.1;margin:8px 0 6px}
+header p{margin:0;color:var(--muted)}
+.start{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:6px 12px 6px 6px;border-radius:999px;background:var(--chip);font-weight:600;font-size:.95rem}
+.start b{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--sign);color:var(--sign-ink)}
+.search{margin-top:18px}
+.search input{width:100%;font:inherit;font-size:1.05rem;padding:14px 16px;border:2px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
+.search input:focus,.chip:focus-visible,.card button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 4px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;font:inherit;font-weight:600;font-size:.95rem;padding:8px 14px;border-radius:999px;border:2px solid transparent;background:var(--chip);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--sign);color:var(--sign-ink)}
+.count{margin:14px 0 8px;color:var(--muted);font-size:.95rem}
+.list{display:grid;gap:12px;padding:0;margin:0;list-style:none}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.card>button{all:unset;box-sizing:border-box;display:flex;width:100%;align-items:center;gap:14px;padding:14px;cursor:pointer}
+.floor{flex:none;display:grid;place-items:center;width:54px;height:54px;border-radius:10px;background:var(--sign);color:var(--sign-ink);font-weight:700;font-size:1.7rem;line-height:1}
+.floor small{display:block;font-size:.6rem;font-family:inherit;font-weight:700;margin-top:-2px;text-align:center}
+.floor span{display:block;text-align:center}
+.title{flex:1;min-width:0}
+.title strong{display:block;font-size:1.15rem}
+.title em{font-style:normal;color:var(--muted);font-size:.9rem}
+.sum{color:var(--muted);font-size:.95rem;margin-top:2px}
+.caret{flex:none;transition:transform .2s;color:var(--muted)}
+.card[data-open="true"] .caret{transform:rotate(180deg)}
+.steps{display:none;margin:0;padding:4px 14px 16px;list-style:none;border-top:1px solid var(--line)}
+.card[data-open="true"] .steps{display:block}
+.steps li{display:flex;gap:12px;align-items:flex-start;padding:10px 0 0}
+.arrow{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:8px;background:var(--ink);color:var(--bg);font-size:1.2rem;font-weight:700}
+.steps p{margin:5px 0 0}
+.empty{padding:28px 16px;text-align:center;color:var(--muted);border:2px dashed var(--line);border-radius:14px}
+.note{margin-top:28px;font-size:.85rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.caret{transition:none}}
+</style>
+</head>
+<body>
+<div class="brand"><div><svg viewBox="0 0 130 36" role="img" aria-label="KPMG"><text x="0" y="30" font-family="Arial Black,Arial,Helvetica,sans-serif" font-weight="900" font-size="36" letter-spacing="1" fill="#ffffff">KPMG</text></svg></div></div>
+<main>
+  <header>
+    <h1>Find your way</h1>
+    <p>Search for a room, team or facility to get directions.</p>
+    <div class="start"><b>↑</b>Directions start at the elevator, or the main entrance on the ground floor</div>
+  </header>
+
+  <div class="search">
+    <input id="q" type="search" placeholder="Try “Vida” or “boardroom”" aria-label="Search the directory" autocomplete="off">
+  </div>
+  <div class="chips" id="chips" role="group" aria-label="Filter by floor"></div>
+
+  <div class="count" id="count" aria-live="polite"></div>
+  <ul class="list" id="list"></ul>
+
+  <p class="note">Prototype built from the directions provided. Review each route before sharing.</p>
+</main>
+
+<script>
+// Direction types: L = turn left, R = turn right, S = straight ahead, X = cross, D = arrive
+var DATA = [
+  {name:"Reception",floor:0,from:"the main entrance",cat:"Facility",kw:"front desk visitors check in",steps:[["S","Enter the building and look straight ahead."],["D","Reception faces the main entrance."]]},
+  {name:"Sitting area",floor:0,from:"the main entrance",cat:"Facility",kw:"couches lounge waiting",steps:[["R","Enter the building and look to your right."],["D","The sitting area with couches is on your right."]]},
+  {name:"Auditorium",floor:0,from:"the main entrance",cat:"Meeting room",kw:"events hall talks presentations",steps:[["R","Enter the building and turn right."],["S","Walk past the sitting area."],["D","The auditorium is next to the sitting area."]]},
+  {name:"Toilets (ground floor)",floor:0,from:"the main entrance",cat:"Facility",kw:"restrooms bathroom washroom",steps:[["R","Enter the building and turn right."],["S","Walk past the sitting area and the auditorium."],["D","The toilets are opposite the auditorium."]]},
+  {name:"Cafeteria",floor:0,from:"the main entrance",cat:"Café",kw:"food lunch coffee canteen",steps:[["R","Enter the building and turn right."],["S","Continue past the auditorium and the toilets."],["D","The cafeteria is further along on your right."]]},
+  {name:"Vida",floor:1,cat:"Café",kw:"coffee cafe food lunch",steps:[["L","Exit the elevator and turn left."],["S","Pass the glass doors on your right and go straight to the end of the hallway."],["D","Vida is on your left. The toilets are also on the left of the hallway."]]},
+  {name:"Financial audit team",floor:1,cat:"Team",kw:"finance audit accounting",steps:[["L","Exit the elevator and turn left."],["S","Stay beside the steps that go down to the ground floor."],["D","The glass door next to the steps leads to the financial audit team."]]},
+  {name:"Kitchen",floor:1,cat:"Facility",kw:"tea coffee microwave fridge",steps:[["R","Exit the elevator and turn right."],["S","Pass the glass doors and go straight through the hallway."],["D","The kitchen is on your left."]]},
+  {name:"Toilets (right of elevator)",floor:1,cat:"Facility",kw:"restrooms bathroom washroom",steps:[["R","Exit the elevator and turn right."],["S","Pass the glass doors and go straight through the hallway."],["D","The toilets are on your right, opposite the kitchen."]]},
+  {name:"Toilets (left of elevator)",floor:1,cat:"Facility",kw:"restrooms bathroom washroom",steps:[["L","Exit the elevator and turn left."],["S","Go straight, passing the glass doors on your right."],["D","The toilets are on the left of the hallway."]]},
+  {name:"CIM Audit team",floor:2,cat:"Team",kw:"audit cim",steps:[["L","Exit the elevator (the kitchen area is in front of you) and go to the glass doors on your left."],["R","Pass through the glass doors and turn right."],["D","Go straight into the CIM Audit team."]]},
+  {name:"Toilets (2nd floor, left glass doors)",floor:2,cat:"Facility",kw:"restrooms bathroom washroom",steps:[["L","Exit the elevator and go to the glass doors on your left."],["R","After entering the glass doors, turn right."],["L","Then turn left into the hallway."],["D","The toilets are on your left."]]},
+  {name:"Boardrooms (2nd floor)",floor:2,cat:"Meeting room",kw:"meeting conference",steps:[["R","Exit the elevator and turn right to the glass doors."],["D","After entering the glass doors, the boardrooms are on your left."]]},
+  {name:"Toilets (2nd floor, right glass doors)",floor:2,cat:"Facility",kw:"restrooms bathroom washroom",steps:[["R","Exit the elevator and turn right to the glass doors."],["R","After entering, turn right into the hallway."],["D","The toilets are on your right."]]},
+  {name:"Human Resources",floor:2,cat:"Team",kw:"hr people recruitment leave",steps:[["R","Exit the elevator and turn right to the glass doors."],["D","After the glass doors, HR is on your right."]]},
+  {name:"Third floor",floor:3,cat:"Information",kw:"rented leased other company",steps:[["D","This floor is rented out to another company."]]},
+  {name:"Tech Risk Audit team",floor:4,cat:"Team",kw:"audit technology risk",steps:[["L","Exit the elevator (the kitchen area is in front of you) and go to the glass doors on your left."],["R","Pass through the glass doors and turn right."],["D","Go straight into the Tech Risk Audit team."]]},
+  {name:"ITS team",floor:4,cat:"Team",kw:"its it technology",steps:[["L","Exit the elevator and turn left."],["L","Turn left again."],["S","Go straight through the hallway."],["L","Turn left at the end of the hallway."],["D","You will see the ITS team."]]},
+  {name:"Toilets (4th floor, left glass doors)",floor:4,cat:"Facility",kw:"restrooms bathroom washroom",steps:[["L","Exit the elevator and go to the glass doors on your left."],["R","After entering the glass doors, turn right."],["L","Then turn left into the hallway."],["D","The toilets are on your left."]]},
+  {name:"Deals Advisory team",floor:4,cat:"Team",kw:"deals advisory",steps:[["R","Exit the elevator and turn right to the glass doors."],["S","Enter the glass doors and go straight."],["D","The Deals Advisory team is on your left."]]},
+  {name:"Management Consulting team",floor:4,cat:"Team",kw:"consulting management",steps:[["R","Exit the elevator and turn right to the glass doors."],["S","Enter and keep going straight down."],["L","Turn left."],["D","You will see the Management Consulting team."]]},
+  {name:"Internal Audit team",floor:4,cat:"Team",kw:"audit internal",steps:[["R","Exit the elevator and turn right to the glass doors."],["L","From the glass door, turn left."],["R","Shortly after, turn right."],["S","Go straight to the end of the hallway."],["D","The Internal Audit team is at the end. Toilets are on your right and boardrooms on your left along the way."]]},
+  {name:"Toilets (4th floor, Internal Audit hallway)",floor:4,cat:"Facility",kw:"restrooms bathroom washroom",steps:[["R","Exit the elevator and turn right to the glass doors."],["L","From the glass door, turn left."],["R","Shortly after, turn right and go straight along the hallway."],["D","The toilets are on your right."]]},
+  {name:"Boardrooms (4th floor)",floor:4,cat:"Meeting room",kw:"meeting conference",steps:[["D","Boardrooms are located throughout the hallways on this floor."]]},
+  {name:"Training rooms",floor:5,cat:"Meeting room",kw:"training course workshop",steps:[["S","Exit the elevator and follow the path."],["D","Check the screen above to see which training room you should attend."]]}
+];
+var ARROWS = {L:"←",R:"→",S:"↑",X:"⇢",D:"●"};
+var SUM = {L:"Turn left",R:"Turn right",S:"Go straight",X:"Cross",D:""};
+var floorSel = null, openName = null;
+var q = document.getElementById("q"), list = document.getElementById("list"),
+    chips = document.getElementById("chips"), count = document.getElementById("count");
+
+function ord(n){ return n===0 ? "Ground" : n + (n===1?"st":n===2?"nd":n===3?"rd":"th"); }
+
+function buildChips(){
+  var floors = [null].concat(Array.from(new Set(DATA.map(function(d){return d.floor;}))).sort());
+  chips.innerHTML = "";
+  floors.forEach(function(f){
+    var b = document.createElement("button");
+    b.className = "chip"; b.type = "button";
+    b.textContent = f===null ? "All floors" : ord(f) + " floor";
+    b.setAttribute("aria-pressed", String(f===floorSel));
+    b.onclick = function(){ floorSel = f; buildChips(); render(); };
+    chips.appendChild(b);
+  });
+}
+
+function render(){
+  var term = q.value.trim().toLowerCase();
+  var res = DATA.filter(function(d){
+    if(floorSel!==null && d.floor!==floorSel) return false;
+    if(!term) return true;
+    return (d.name+" "+d.cat+" "+d.kw+" floor "+(d.floor===0?"ground":d.floor)).toLowerCase().indexOf(term) > -1;
+  });
+  count.textContent = res.length + (res.length===1 ? " place" : " places");
+  list.innerHTML = "";
+  if(!res.length){
+    var e = document.createElement("li");
+    e.className = "empty";
+    e.textContent = "No match. Try a shorter word, or choose All floors.";
+    list.appendChild(e);
+    return;
+  }
+  res.forEach(function(d){
+    var key = d.name+"|"+d.floor; var open = (openName===key) || res.length===1;
+    var li = document.createElement("li");
+    li.className = "card"; li.setAttribute("data-open", String(open));
+    var first = d.steps[0];
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.setAttribute("aria-expanded", String(open));
+    btn.innerHTML =
+      '<div class="floor"><div><span>'+(d.floor===0?"G":d.floor)+'</span><small>FLOOR</small></div></div>'+
+      '<div class="title"><strong></strong><em></em><div class="sum"></div></div>'+
+      '<span class="caret" aria-hidden="true">▾</span>';
+    btn.querySelector("strong").textContent = d.name;
+    btn.querySelector("em").textContent = d.cat;
+    btn.querySelector(".sum").textContent = (SUM[first[0]] || "Directions") + " from " + (d.from||"the elevator");
+    btn.onclick = function(){ openName = (openName===key) ? null : key; render(); };
+    li.appendChild(btn);
+    var ol = document.createElement("ol"); ol.className = "steps";
+    d.steps.forEach(function(s){
+      var si = document.createElement("li");
+      var a = document.createElement("span"); a.className = "arrow"; a.setAttribute("aria-hidden","true"); a.textContent = ARROWS[s[0]];
+      var p = document.createElement("p"); p.textContent = s[1];
+      si.appendChild(a); si.appendChild(p); ol.appendChild(si);
+    });
+    li.appendChild(ol);
+    list.appendChild(li);
+  });
+}
+
+q.addEventListener("input", render);
+buildChips(); render();
+</script>
+</body>
+</html>
